@@ -1,0 +1,168 @@
+﻿@using Recursiva.Models;
+
+@model List<SocioModel>
+
+<div class="row m-5">
+    <div class="col bg-light p-5">
+        @if (Model != null && Model.Count() > 1)
+        {
+            <div id="accordion">
+
+                <!-- #region Resultado 1 -->
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-dark collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Resultado #1
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5 class="card-title">Cantidad total de personas registradas</h5>
+
+                            <h4>@Model.Count()</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- #endregion -->
+                <!-- #region Resultado 2 -->
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <button class="btn btn-dark collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Resultado #2
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5 class="card-title">Promedio de edad de los socios de Racing</h5>
+                            <h4>@Math.Truncate(Model.Where(m => m.Team == "Racing").Average(m => m.Age))</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- #endregion -->
+                <!-- #region Resultado 3 -->
+                <div class="card">
+                    <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                            <button class="btn btn-dark collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Resultado #3
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                100 primeras personas casadas con estudios Universitarios ordenadas de menor a mayor según su edad
+                            </h5>
+                            <table class="table text-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Edad</th>
+                                        <th>Equipo</th>
+                                        <th>Estado Civil</th>
+                                        <th>Estudios</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var d in Model.Where(m => m.MaritalStatus == "Casado" && m.Schooling.Contains("Universitario")).Take(100).OrderBy(m => m.Age))
+                                    {
+                                        <tr>
+                                            <td>@d.Name</td>
+                                            <td>@d.Age</td>
+                                            <td>@d.Team</td>
+                                            <td>@d.MaritalStatus</td>
+                                            <td>@d.Schooling</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- #endregion -->
+                <!-- #region Resultado 4 -->
+                <div class="card">
+                    <div class="card-header" id="headingFour">
+                        <h5 class="mb-0">
+                            <button class="btn btn-dark collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Resultado #4
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5 class="card-title">los 5 nombres más comunes entre los hinchas de River</h5>
+                            <table class="table text-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var d in Model.Where(m => m.Team == "River").GroupBy(m => m.Name).Take(5))
+                                    {
+                                        <tr>
+                                            <td>@d.Key</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- #endregion -->
+                <!-- #region Resultado 5 -->
+                <div class="card">
+                    <div class="card-header" id="headingFive">
+                        <h5 class="mb-0">
+                            <button class="btn btn-dark collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                Resultado #3
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Clubes ordenados de mayor a menor según la cantidad de socios junto con el promedio de edad de sus socios, la menor edad registrada y la mayor edad registrada.
+                            </h5>
+                            <table class="table text-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Equipo</th>
+                                        <th>Promedio Edad</th>
+                                        <th>Menor Edad</th>
+                                        <th>Mayor Edad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var d in Model.GroupBy(m => m.Team).OrderByDescending(m => m.Count()))
+                                    {
+                                        <tr>
+                                            <td>@d.Key</td>
+                                            <td>@Math.Truncate(d.Average(m => m.Age))</td>
+                                            <td>@d.Min(m => m.Age)</td>
+                                            <td>@d.Max(m => m.Age)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- #endregion -->
+            </div>
+
+        } 
+        else 
+        {
+            <h3 class="text-danger text-center">El archivo no se pudo cargar correctamente</h3>
+        }
+
+        @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-primary m-3" })
+    </div>
+</div>
